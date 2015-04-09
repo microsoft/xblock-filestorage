@@ -1,0 +1,4 @@
+onedrive_xblock.egg-info
+*.log
+*.pyc
+*~

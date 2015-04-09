@@ -1,0 +1,18 @@
+# May need to do this on a Mac - CPATH=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/libxml2 CFLAGS=-Qunused-arguments CPPFLAGS=-Qunused-arguments pip install lxml
+ddt
+lxml
+mock
+selenium
+pep8
+pylint
+coverage==3.7
+coveralls
+django==1.4.18
+-e git+https://github.com/nosedjango/nosedjango.git@ed7d7f9aa969252ff799ec159f828eaa8c1cbc5a#egg=nosedjango-dev
+-e git+https://github.com/edx-solutions/xblock-utils.git#egg=xblock-utils
+# Normally we'd use no specific hash here, but master appears to have a defect, a proposed solution appears in the git hash below
+-e git+https://github.com/edx/xblock-sdk.git@c251b8924ef5bf89fb59a0a5df2723114cdf4154#egg=xblock-sdk
+-e git+https://github.com/edx/XBlock.git#egg=XBlock
+-e git+https://github.com/edx/bok-choy.git#egg=bok-choy
+-e git+https://github.com/pmitros/django-pyfs.git@d175715e0fe3367ec0f1ee429c242d603f6e8b10#egg=djpyfs
+-e .

@@ -1,0 +1,48 @@
+{% load i18n %}
+
+<!-- TODO: Replace by default edit view once available in Studio -->
+<div class="wrapper-comp-settings is-active editor-with-buttons onedrive-edit-wrapper" id="document-settings-tab">
+  <div class="user-inputs-and-validation">
+    <div class="validation_alert covered">
+      <i class="alert_icon"></i>
+      <div class="alert_header">
+        <h2 class="alert_title">{% trans "Invalid OneDrive Document" %}</h2>
+        <p class="alert_message">{% trans "Please correct the outlined fields." %}</p>
+      </div>
+    </div>
+    <div class="xblock-inputs editor_content_wrapper">
+      <ul class="list-input settings-list">
+        <li class="field comp-setting-entry is-set">
+          <div class="wrapper-comp-setting">
+            <label class="label setting-label" for="edit_display_name">{% trans "Display Name" %}</label>
+            <input class="input setting-input edit-display-name" id="edit_display_name" value="{{ self.display_name }}" type="text" data-default-value="{{defaultName}}">
+            <button class="action setting-clear clear-display-name" type="button" name="setting-clear">
+              <i class="icon fa fa-undo"></i>
+              <span class="sr">"<%= gettext("Clear Value") %>"</span>
+            </button>
+          </div>
+          <span class="tip setting-help">{% trans "This name appears in the horizontal navigation at the top of the page." %}</span>
+        </li>
+        <li class="field comp-setting-entry is-set">
+          <div class="wrapper-comp-setting">
+            <label class="label setting-label" for="edit_embed_code">{% trans "OneDrive Doc URL" %}</label>
+            <textarea rows="3" cols="80" class="input setting-input edit-embed-code" id="edit_onedrive_url">{{ self.document_url }}</textarea>
+          </div>
+          <span class="tip setting-help">{% trans "Copy the OneDrive Document URL into this field." %}</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="xblock-actions">
+    <span class="xblock-editor-error-message"></span>
+    <ul>
+      <li class="action-item">
+        <a href="#" id="document-submit-options" class="button action-primary save-button">{% trans "Save" %}</a>
+      </li>
+
+      <li class="action-item">
+        <a href="#" class="button cancel-button" id="cancel_button">{% trans "Cancel" %}</a>
+      </li>
+    </ul>
+  </div>
+</div>

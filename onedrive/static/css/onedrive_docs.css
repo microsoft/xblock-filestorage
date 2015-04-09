@@ -1,0 +1,18 @@
+.onedrive-docs-xblock-wrapper iframe{
+    max-width: 100%;
+    display:block;
+    margin: 0 auto;
+}
+
+.onedrive-docs-xblock-wrapper iframe.no-width-height{
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 450px;
+}
+
+.onedrive-docs-xblock-wrapper img{
+    width: auto;
+    height : auto;
+    max-width: 100%;
+}
