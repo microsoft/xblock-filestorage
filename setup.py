@@ -1,4 +1,4 @@
-"""Setup for onedrive XBlock."""
+"""Setup for File Storage XBlock."""
 
 import os
 from setuptools import setup
@@ -21,19 +21,23 @@ def package_data(pkg, roots):
 
 
 setup(
-    name='xblock-onedrive',
+    name='xblock-file-storage',
     version='0.1',
-    description='OneDrive XBlock for edX',   # TODO: write a better description.
+    description='File Storage XBlock',   # TODO: write a better description.
     packages=[
         'onedrive',
     ],
     install_requires=[
         'XBlock',
+        'xblock-utils',
+    ],
+    dependency_links=[
+        'http://github.com/edx-solutions/xblock-utils/tarball/master#egg=xblock-utils',
     ],
     entry_points={
         'xblock.v1': [
-            'xblock-onedrive = onedrive:OneDriveXBlock',
+            'onedrive = onedrive:OneDriveDocumentBlock',
         ]
     },
-    package_data=package_data("onedrive", ["static", "public"]),
+    package_data=package_data("onedrive", ["static", "templates", "public"]),
 )

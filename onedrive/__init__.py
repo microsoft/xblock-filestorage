@@ -1,1 +1,4 @@
-from .onedrive import OneDriveXBlock
+"""
+OneDrive XBlocks
+"""
+from .onedrive import OneDriveDocumentBlock

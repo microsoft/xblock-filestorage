@@ -1,0 +1,11 @@
+.onedrive-xblock-wrapper iframe{
+    width: 100%;
+    min-height: 569px;
+    display: block;
+    margin: 0 auto;
+}
+
+.onedrive-xblock-wrapper iframe.no-width-height{
+    top: 0;
+    left: 0;
+}
