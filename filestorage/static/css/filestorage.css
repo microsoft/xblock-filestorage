@@ -1,0 +1,23 @@
+/* CSS for FileStorageXBlock */
+
+.filestorage_block p {
+    cursor: pointer;
+}
+
+.tip{
+    width:100%;
+    padding-top: 10px;
+}
+
+
+.filestorage_block_wrapper iframe{
+    width: 100%;
+    min-height: 569px;
+    display: block;
+    margin: 0 auto;
+}
+
+.filestorage_block_wrapper iframe.no-width-height{
+    top: 0;
+    left: 0;
+}
