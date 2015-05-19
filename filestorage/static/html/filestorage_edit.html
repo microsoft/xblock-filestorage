@@ -1,7 +1,6 @@
 
 <div class="wrapper-comp-settings is-active editor-with-buttons filestorage_block" id="settings-tab">
 
-
           <ul class="list-input settings-list">
               <li class="field comp-setting-entry is-set">
                     <label class="label setting-label">Unit Display Name</label>
@@ -10,22 +9,24 @@
               </li>
 
               <li class="field comp-setting-entry is-set">
-                    <label class="label setting-label">Microsoft OneDrive Document URL</label>
+                    <label class="label setting-label">Please provide the document URL</label>
                     <input class="input setting-input" id="edit_ms_ocument_url" name="edit_ms_document_url"  value="{self.ms_document_url}" type="text">
                     <span class="tip setting-help">Microsoft provides a sharing link for OneDrive documents. In the OneDrive document, select Share from the menu, click Get a Link and copy the link to this field</span>
               </li>
 
                <li class="field comp-setting-entry is-set">
-                    <label class="label setting-label">Download Link</label>
-                    <input class="input setting-input" id="edit_download_link" name="edit_download_link"  value="{self.download_link}" type="text">
-                    <span class="tip setting-help">Use to provide a download file link</span>
+                    <label class="label setting-label">Please choose one of the following options</label><br><br>
+		    <select name=model class="input setting-input" id="output_models">
+			<option value='1' {self.model1}>Add a reference</option>
+			<option value='2' {self.model2}>Download the document</option>
+			<option value='3' {self.model3}>Embed the file</option>
+		    </select><br><br>
+		    <div id='add_reference_name'>
+		     <label class="label setting-label">Text to use for the reference</label><br><br>
+		    <input class="input setting-input" id="edit_reference_name" name="edit_reference_name"  value="{self.reference_name}" type="text">	
+		    </div>
               </li>
 
-              <li class="field comp-setting-entry is-set">
-                    <label class="label setting-label">Embed Code</label>
-                    <textarea  rows="3" cols="60" class="input setting-input" id="edit_embed_code" name="edit_embed_code" >{self.embed_code}</textarea>
-
-              </li>
           </ul>
 
     <div class="xblock-actions">

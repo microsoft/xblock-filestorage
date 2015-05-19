@@ -7,9 +7,9 @@ function FileStorageXBlock(runtime, element) {
     var data = {
 
       display_name: $(element).find('input[name=edit_display_name]').val(),
-      download_link: $(element).find('input[name=edit_download_link]').val(),
+      reference_name: $(element).find('input[name=edit_reference_name]').val(),
       ms_document_url: $(element).find('input[name=edit_ms_document_url]').val(),
-      embed_code: $(element).find('textarea[name=edit_embed_code]').val()
+      model: $(element).find('select[name=model]').val(),
 
     };
 
@@ -17,13 +17,36 @@ function FileStorageXBlock(runtime, element) {
       window.location.reload(false);
     });
 
+
+
   });
 
-  $(element).find('.cancel-button').bind('click', function() {
-    runtime.notify('cancel', {});
+   $('.cancel-button', element).bind('click', function() {
+        runtime.notify('cancel', {});
+    });
+
+
+  $('#output_models').bind('change', function() {
+
+	$mymodel = $("#output_models" ).val();
+	
+	if($mymodel > 1){
+
+		$("#add_reference_name").hide();	
+	}else{
+
+		$("#add_reference_name").show();	
+
+	}
   });
 
     $(function ($) {
         /* Here's where you'd do things on page load. */
+
+	if($("#output_models" ).val() > 1){
+
+                $("#add_reference_name").hide();
+        }
+
     });
 }

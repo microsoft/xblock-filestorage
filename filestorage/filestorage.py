@@ -2,7 +2,7 @@
 
 import pkg_resources
 import textwrap
-
+import urllib2
 
 from xblock.core import XBlock
 from xblock.fields import Integer, Scope, String, Any, Boolean, Dict
@@ -40,6 +40,8 @@ class FileStorageXBlock(XBlock):
         scope=Scope.settings,
         default="File Storage",
     )
+
+
     ms_document_url = String(
         display_name="Document URL",
         help=(
@@ -49,32 +51,55 @@ class FileStorageXBlock(XBlock):
         default=DEFAULT_DOCUMENT_URL
     )
 
-    download_link = String(
-        display_name="Download Link",
+    reference_name = String(
+        display_name="Reference Name",
         help=(
-            "Use to provide a download file link."
-        ),
-        scope=Scope.settings,
-        default="none"
-    )
-
-    embed_code = String(
-        display_name="Embed Code",
-        help=(
-            "select Embed from the menu and copy the embed code into this field."
+            "The name used as link."
         ),
         scope=Scope.settings,
         default=""
     )
 
-
+    output_model = String(
+        display_name="Ouput Model",
+        help=(
+            "The name used as link."
+        ),
+        scope=Scope.settings,
+        default="3"
+    )
+    
+    model1 = String(
+        display_name="Model1 preselection",
+        help=(
+            "preselect from."
+        ),
+        scope=Scope.settings,
+        default=""
+    )	
+    model2 = String(
+        display_name="Model2 preselection",
+        help=(
+            "preselect from."
+        ),
+        scope=Scope.settings,
+        default=""
+    )	
+    model3 = String(
+        display_name="Model3 preselection",
+        help=(
+            "preselect from."
+        ),
+        scope=Scope.settings,
+        default="selected=selected"
+    )	
     output_code = String(
         display_name="Output Iframe Embed Code",
         help=(
             "select Embed from the menu and copy the embed code into this field."
         ),
         scope=Scope.settings,
-        default=""
+        default=MS_EMBED_CODE_TEMPLATE.format(DEFAULT_DOCUMENT_URL)
     )
 
     def resource_string(self, path):
@@ -102,9 +127,6 @@ class FileStorageXBlock(XBlock):
         when viewing courses.
         """
 
-
-
-
         html = self.resource_string("static/html/filestorage_edit.html")
         frag = Fragment(html.format(self=self))
         frag.add_css(self.resource_string("static/css/filestorage.css"))
@@ -123,16 +145,35 @@ class FileStorageXBlock(XBlock):
                 'result': 'error'
             }
 
-        self.download_link = submissions['download_link']
         self.ms_document_url = submissions['ms_document_url']
-        self.embed_code = submissions['embed_code']
+        self.reference_name = submissions['reference_name']
+        self.output_model = submissions['model']
 
         if 'display_name' in submissions:
 
             self.display_name = submissions['display_name']
 
 
-        if self.ms_document_url != "":
+        if self.output_model == "1":
+
+            self.output_code = "<a href="+self.ms_document_url+" target='_blank'>"+self.reference_name+"</a>"
+
+	    self.model1 = "SELECTED=selected"
+	    self.model2 = ""
+	    self.model3 = ""
+
+        if self.output_model == "2":
+
+            document_url = submissions['ms_document_url']
+            document_url = document_url.replace('embed', 'download')
+
+            self.output_code = "<a href="+document_url+" target='_blank'>Download the document</a>"
+	    
+	    self.model2 = "SELECTED=selected"
+	    self.model1 = ""
+	    self.model3 = ""
+
+        if self.output_model == "3":
 
             document_url = submissions['ms_document_url']
             document_url = document_url.replace('view.aspx', 'embed').replace('redir', 'embed')
@@ -147,13 +188,9 @@ class FileStorageXBlock(XBlock):
 
             self.output_code = MS_EMBED_CODE_TEMPLATE.format(document_url)
 
-        if self.embed_code != "":
-
-            self.output_code = self.embed_code
-
-        if self.download_link != "":
-
-            self.output_code = "<a href='"+self.download_link+"'>Download Link</a>" + self.output_code
+	    self.model3 = "SELECTED=selected"
+	    self.model2 = ""
+	    self.model1 = ""
 
         return {'result': 'success'}
 
