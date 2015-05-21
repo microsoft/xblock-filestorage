@@ -35,8 +35,7 @@ function FileStorageXBlock(runtime, element) {
 		$("#add_reference_name").hide();	
 	}else{
 
-		$("#add_reference_name").show();	
-
+		$("#add_reference_name").show();
 	}
   });
 
