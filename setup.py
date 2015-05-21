@@ -22,7 +22,7 @@ def package_data(pkg, roots):
 
 setup(
     name='filestorage-xblock',
-    version='2.00',
+    version='2.01',
     description='filestorage XBlock',   # TODO: write a better description.
     packages=[
         'filestorage',
