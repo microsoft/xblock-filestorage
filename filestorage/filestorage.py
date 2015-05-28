@@ -10,6 +10,32 @@ from xblock.fragment import Fragment
 
 from urllib import urlencode
 from urlparse import parse_qs, urlsplit, urlunsplit
+import pkg_resources
+import logging
+import requests
+import urllib2
+import tempfile
+import mimetypes
+import uuid
+
+from xblock.core import XBlock
+from xblock.fragment import Fragment
+from xblockutils.resources import ResourceLoader
+from xblock.fields import Scope, String
+from xblockutils.publish_event import PublishEventMixin
+from urllib import urlencode
+from urlparse import parse_qs, urlsplit, urlunsplit
+
+
+import logging
+from functools import partial
+from cache_toolbox.core import del_cached_content
+
+from xmodule.contentstore.django import contentstore
+from xmodule.contentstore.content import StaticContent
+from opaque_keys.edx.keys import CourseKey, AssetKey
+LOG = logging.getLogger(__name__)
+
 
 """ easy for develop, to be removed"""
 
@@ -139,6 +165,7 @@ class FileStorageXBlock(XBlock):
         """
         Change the settings for this XBlock given by the Studio user
         """
+        LOG.info('in studio submit')
         if not isinstance(submissions, dict):
             LOG.error("submissions object from Studio is not a dict - %r", submissions)
             return {
@@ -148,6 +175,8 @@ class FileStorageXBlock(XBlock):
         self.ms_document_url = submissions['ms_document_url']
         self.reference_name = submissions['reference_name']
         self.output_model = submissions['model']
+
+        LOG.info('output model: ' + self.output_model)
 
         if 'display_name' in submissions:
 
@@ -167,8 +196,55 @@ class FileStorageXBlock(XBlock):
             document_url = submissions['ms_document_url']
             document_url = document_url.replace('embed', 'download')
 
+            LOG.info('document_url: ')
+            LOG.info(document_url)
+
             self.output_code = "<a href="+document_url+" target='_blank'>Download the document</a>"
-	    
+            course_key = CourseKey.from_string('course-v1:edX+DemoX+Demo_Course')
+
+            onedrive_response = urllib2.urlopen('https://msopentechtest01-my.sharepoint.com/personal/student1_msopentechtest01_onmicrosoft_com/_layouts/15/guestaccess.aspx?guestaccesstoken=%2fjM%2bzKOLZXBq5F9XPFQbrqQxIVG%2fvQxKzdGvEbLvX4g%3d&docid=11424b23305084eb8ae8998a4c34f66a5')
+            file = onedrive_response.read()
+
+            tmp_file = str(uuid.uuid4())
+            ext = mimetypes.guess_extension(onedrive_response.headers.type, strict=False)
+
+            tmp_file = tmp_file + ext
+
+            content_loc = StaticContent.compute_location(course_key, 'test.html')
+
+            LOG.info('location: ')
+            LOG.info(content_loc)
+
+            sc_partial = partial(StaticContent, content_loc, 'test.html', onedrive_response.headers.type)
+
+            content = sc_partial(file)
+            tempfile_path = None
+
+            # first let's see if a thumbnail can be created
+            (thumbnail_content, thumbnail_location) = contentstore().generate_thumbnail(
+                content,
+                tempfile_path=tempfile_path,
+            )
+
+            del_cached_content(thumbnail_location)
+            
+            # now store thumbnail location only if we could create it
+            if thumbnail_content is not None:
+                content.thumbnail_location = thumbnail_location
+
+            # then commit the content
+            contentstore().save(content)
+            del_cached_content(content.location)
+
+            # readback the saved content - we need the database timestamp
+            readback = contentstore().find(content.location)
+            locked = getattr(content, 'locked', False)
+
+            LOG.info('readback: ')
+            LOG.info(readback)
+            LOG.info('locked: ')
+            LOG.info(locked)
+
 	    self.model2 = "SELECTED=selected"
 	    self.model1 = ""
 	    self.model3 = ""
