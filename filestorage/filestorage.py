@@ -193,13 +193,15 @@ class FileStorageXBlock(XBlock):
 
         if self.output_model == "2":
 
-            document_url = submissions['ms_document_url']
+            document_url = self.ms_document_url
             document_url = document_url.replace('embed', 'download')
 
             LOG.info('document_url: ')
             LOG.info(document_url)
+            LOG.info('reference_name: ')
+            LOG.info(self.reference_name)
 
-            self.output_code = "<a href="+document_url+" target='_blank'>Download the document</a>"
+            self.output_code = "<a href="+document_url+" target='_blank'>"+self.reference_name+"</a>"
             course_key = CourseKey.from_string('course-v1:edX+DemoX+Demo_Course')
 
             onedrive_response = urllib2.urlopen('https://msopentechtest01-my.sharepoint.com/personal/student1_msopentechtest01_onmicrosoft_com/_layouts/15/guestaccess.aspx?guestaccesstoken=%2fjM%2bzKOLZXBq5F9XPFQbrqQxIVG%2fvQxKzdGvEbLvX4g%3d&docid=11424b23305084eb8ae8998a4c34f66a5')

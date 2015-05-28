@@ -30,7 +30,7 @@ function FileStorageXBlock(runtime, element) {
 
 	$mymodel = $("#output_models" ).val();
 	
-	if($mymodel > 1){
+	if($mymodel > 2){
 
 		$("#add_reference_name").hide();	
 	}else{
@@ -42,7 +42,7 @@ function FileStorageXBlock(runtime, element) {
     $(function ($) {
         /* Here's where you'd do things on page load. */
 
-	if($("#output_models" ).val() > 1){
+	if($("#output_models" ).val() > 2){
 
                 $("#add_reference_name").hide();
         }
