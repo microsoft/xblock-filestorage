@@ -181,7 +181,7 @@ class FileStorageXBlock(XBlock):
             document_url = document_url.replace('embed', 'download')
             reference_name = self.reference_name.encode('utf8')
 
-            course_key = CourseKey.from_string('course-v1:edX+DemoX+Demo_Course')
+            course_key = CourseKey.from_string(self.course_id)
 
             onedrive_response = urllib2.urlopen(self.ms_document_url)
 
@@ -234,6 +234,8 @@ class FileStorageXBlock(XBlock):
             LOG.info(external_url)
             LOG.info('portable_url')
             LOG.info(StaticContent.get_static_path_from_location(content.location))
+            LOG.info('course id')
+            LOG.info(self.course_id)
 
 	    self.model2 = "SELECTED=selected"
 	    self.model1 = ""
