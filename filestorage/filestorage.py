@@ -1,31 +1,17 @@
 """TO-DO: Write a description of what this XBlock is."""
 
-import pkg_resources
 import textwrap
-import urllib2
 
-from xblock.core import XBlock
-from xblock.fields import Integer, Scope, String, Any, Boolean, Dict
-from xblock.fragment import Fragment
-
-from urllib import urlencode
-from urlparse import parse_qs, urlsplit, urlunsplit
 import pkg_resources
-import logging
-import requests
 import urllib2
-import tempfile
 import mimetypes
-import uuid
 
 from xblock.core import XBlock
 from xblock.fragment import Fragment
-from xblockutils.resources import ResourceLoader
 from xblock.fields import Scope, String
-from xblockutils.publish_event import PublishEventMixin
 from urllib import urlencode
 from urlparse import parse_qs, urlsplit, urlunsplit
-
+from django.conf import settings
 
 import logging
 from functools import partial
@@ -33,7 +19,7 @@ from cache_toolbox.core import del_cached_content
 
 from xmodule.contentstore.django import contentstore
 from xmodule.contentstore.content import StaticContent
-from opaque_keys.edx.keys import CourseKey, AssetKey
+from opaque_keys.edx.keys import CourseKey
 LOG = logging.getLogger(__name__)
 
 
@@ -165,7 +151,6 @@ class FileStorageXBlock(XBlock):
         """
         Change the settings for this XBlock given by the Studio user
         """
-        LOG.info('in studio submit')
         if not isinstance(submissions, dict):
             LOG.error("submissions object from Studio is not a dict - %r", submissions)
             return {
@@ -176,7 +161,6 @@ class FileStorageXBlock(XBlock):
         self.reference_name = submissions['reference_name']
         self.output_model = submissions['model']
 
-        LOG.info('output model: ' + self.output_model)
 
         if 'display_name' in submissions:
 
@@ -195,29 +179,22 @@ class FileStorageXBlock(XBlock):
 
             document_url = self.ms_document_url
             document_url = document_url.replace('embed', 'download')
+            reference_name = self.reference_name.encode('utf8')
 
-            LOG.info('document_url: ')
-            LOG.info(document_url)
-            LOG.info('reference_name: ')
-            LOG.info(self.reference_name)
-
-            self.output_code = "<a href="+document_url+" target='_blank'>"+self.reference_name+"</a>"
             course_key = CourseKey.from_string('course-v1:edX+DemoX+Demo_Course')
 
-            onedrive_response = urllib2.urlopen('https://msopentechtest01-my.sharepoint.com/personal/student1_msopentechtest01_onmicrosoft_com/_layouts/15/guestaccess.aspx?guestaccesstoken=%2fjM%2bzKOLZXBq5F9XPFQbrqQxIVG%2fvQxKzdGvEbLvX4g%3d&docid=11424b23305084eb8ae8998a4c34f66a5')
+            onedrive_response = urllib2.urlopen(self.ms_document_url)
+
             file = onedrive_response.read()
 
-            tmp_file = str(uuid.uuid4())
             ext = mimetypes.guess_extension(onedrive_response.headers.type, strict=False)
 
-            tmp_file = tmp_file + ext
 
-            content_loc = StaticContent.compute_location(course_key, 'test.html')
+            file_name = reference_name.replace(" ", "_") + ext
 
-            LOG.info('location: ')
-            LOG.info(content_loc)
+            content_loc = StaticContent.compute_location(course_key, file_name)
 
-            sc_partial = partial(StaticContent, content_loc, 'test.html', onedrive_response.headers.type)
+            sc_partial = partial(StaticContent, content_loc, file_name, onedrive_response.headers.type)
 
             content = sc_partial(file)
             tempfile_path = None
@@ -242,10 +219,21 @@ class FileStorageXBlock(XBlock):
             readback = contentstore().find(content.location)
             locked = getattr(content, 'locked', False)
 
+            asset_url = StaticContent.serialize_asset_key_with_slash(content.location)
+            external_url = settings.LMS_BASE + asset_url
+
+            self.output_code = "<a href="+asset_url+" target='_blank'>"+reference_name+"</a>"
+
             LOG.info('readback: ')
             LOG.info(readback)
             LOG.info('locked: ')
             LOG.info(locked)
+            LOG.info('url')
+            LOG.info(asset_url)
+            LOG.info('external_url')
+            LOG.info(external_url)
+            LOG.info('portable_url')
+            LOG.info(StaticContent.get_static_path_from_location(content.location))
 
 	    self.model2 = "SELECTED=selected"
 	    self.model1 = ""
