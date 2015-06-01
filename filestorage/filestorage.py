@@ -181,7 +181,7 @@ class FileStorageXBlock(XBlock):
             document_url = document_url.replace('embed', 'download')
             reference_name = self.reference_name.encode('utf8')
 
-            course_key = CourseKey.from_string(self.course_id)
+            course_key = CourseKey.from_string(str(self.course_id))
 
             onedrive_response = urllib2.urlopen(self.ms_document_url)
 
