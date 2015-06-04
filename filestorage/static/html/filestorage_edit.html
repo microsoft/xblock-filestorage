@@ -9,16 +9,16 @@
 
               <li class="field comp-setting-entry is-set">
                     <label class="label setting-label">Please provide the document URL</label>
-                    <input class="input setting-input" id="edit_ms_ocument_url" name="edit_ms_document_url"  value="{self.ms_document_url}" type="text">
-                    <span class="tip setting-help">Microsoft provides a sharing link for OneDrive documents. In the OneDrive document, select Share from the menu, click Get a Link and copy the link to this field</span>
+                    <input class="input setting-input" id="edit_ms_ocument_url" name="edit_document_url"  value="{self.document_url}" type="text">
+                    <span class="tip setting-help">This should be a URL where anyone can view this document.</span>
               </li>
 
                <li class="field comp-setting-entry is-set">
                     <label class="label setting-label">Please choose one of the following options</label>
 		    <select name=model class="input setting-input selectf" id="output_models">
-			<option value='1' {self.model1}>Add a reference</option>
-			<option value='2' {self.model2}>Download the document</option>
-			<option value='3' {self.model3}>Embed the file</option>
+			<option value='1' {self.model1}>Add a reference to the original document</option>
+			<option value='2' {self.model2}>Upload the document to the server and then add a reference to it</option>
+			<option value='3' {self.model3}>Embed the original document</option>
 		    </select>
 		</li>
 		<li class="field comp-setting-entry is-set" id='add_reference_name'>

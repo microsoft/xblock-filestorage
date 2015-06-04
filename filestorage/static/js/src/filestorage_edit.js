@@ -8,7 +8,7 @@ function FileStorageXBlock(runtime, element) {
 
       display_name: $(element).find('input[name=edit_display_name]').val(),
       reference_name: $(element).find('input[name=edit_reference_name]').val(),
-      ms_document_url: $(element).find('input[name=edit_ms_document_url]').val(),
+      document_url: $(element).find('input[name=edit_document_url]').val(),
       model: $(element).find('select[name=model]').val()
 
     };

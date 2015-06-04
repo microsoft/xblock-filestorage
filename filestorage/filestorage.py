@@ -45,7 +45,6 @@ MS_EMBED_CODE_TEMPLATE = textwrap.dedent("""
 
 class FileStorageXBlock(XBlock):
 
-
     display_name = String(
         display_name="Display Name",
         help="This name appears in the horizontal navigation at the top of the page.",
@@ -53,11 +52,10 @@ class FileStorageXBlock(XBlock):
         default="File Storage",
     )
 
-
-    ms_document_url = String(
+    document_url = String(
         display_name="Document URL",
         help=(
-            "select Share from the menu, click Get a Link and copy the link to this field."
+            "Navigate to the document in your browser and ensure that it is public. Copy its URL and paste it into this field."
         ),
         scope=Scope.settings,
         default=DEFAULT_DOCUMENT_URL
@@ -66,16 +64,16 @@ class FileStorageXBlock(XBlock):
     reference_name = String(
         display_name="Reference Name",
         help=(
-            "The name used as link."
+            "The link text."
         ),
         scope=Scope.settings,
-        default=""
+        default="Click here"
     )
 
     output_model = String(
         display_name="Ouput Model",
         help=(
-            "The name used as link."
+            "Currently selected option for how to insert the document into the unit."
         ),
         scope=Scope.settings,
         default="3"
@@ -84,31 +82,34 @@ class FileStorageXBlock(XBlock):
     model1 = String(
         display_name="Model1 preselection",
         help=(
-            "preselect from."
+            "Previous selection."
         ),
         scope=Scope.settings,
         default=""
     )	
+
     model2 = String(
         display_name="Model2 preselection",
         help=(
-            "preselect from."
+            "Previous selection."
         ),
         scope=Scope.settings,
         default=""
     )	
+
     model3 = String(
         display_name="Model3 preselection",
         help=(
-            "preselect from."
+            "Previous selection."
         ),
         scope=Scope.settings,
         default="selected=selected"
     )	
+
     output_code = String(
         display_name="Output Iframe Embed Code",
         help=(
-            "select Embed from the menu and copy the embed code into this field."
+            "Copy the embed code into this field."
         ),
         scope=Scope.settings,
         default=MS_EMBED_CODE_TEMPLATE.format(DEFAULT_DOCUMENT_URL)
@@ -157,7 +158,7 @@ class FileStorageXBlock(XBlock):
                 'result': 'error'
             }
 
-        self.ms_document_url = submissions['ms_document_url']
+        self.document_url = submissions['document_url']
         self.reference_name = submissions['reference_name']
         self.output_model = submissions['model']
 
@@ -169,7 +170,7 @@ class FileStorageXBlock(XBlock):
 
         if self.output_model == "1":
 
-            self.output_code = "<a href="+self.ms_document_url+" target='_blank'>"+self.reference_name+"</a>"
+            self.output_code = "<a href="+self.document_url+" target='_blank'>"+self.reference_name+"</a>"
 
 	    self.model1 = "SELECTED=selected"
 	    self.model2 = ""
@@ -177,13 +178,13 @@ class FileStorageXBlock(XBlock):
 
         if self.output_model == "2":
 
-            document_url = self.ms_document_url
+            document_url = self.document_url
             document_url = document_url.replace('embed', 'download')
             reference_name = self.reference_name.encode('utf8')
 
             course_key = CourseKey.from_string(str(self.course_id))
 
-            onedrive_response = urllib2.urlopen(self.ms_document_url)
+            onedrive_response = urllib2.urlopen(self.document_url)
 
             file = onedrive_response.read()
 
@@ -243,7 +244,7 @@ class FileStorageXBlock(XBlock):
 
         if self.output_model == "3":
 
-            document_url = submissions['ms_document_url']
+            document_url = submissions['document_url']
             document_url = document_url.replace('view.aspx', 'embed').replace('redir', 'embed')
 
             scheme, netloc, path, query_string, fragment = urlsplit(document_url)
