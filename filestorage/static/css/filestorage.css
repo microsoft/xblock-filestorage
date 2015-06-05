@@ -4,11 +4,11 @@
     cursor: pointer;
 }
 
-.tip{
-    width:100%;
-    padding-top: 10px;
+.tip {
+    float: right;
+    min-width: 20% !important;
+    width: 25%;
 }
-
 
 .filestorage_block_wrapper iframe{
     width: 100%;
@@ -21,4 +21,3 @@
     top: 0;
     left: 0;
 }
-

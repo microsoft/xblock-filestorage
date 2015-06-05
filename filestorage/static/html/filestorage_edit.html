@@ -1,32 +1,33 @@
-
 <div class="wrapper-comp-settings is-active editor-with-buttons filestorage_block" id="settings-tab">
 
-          <ul class="list-input settings-list">
-              <li class="field comp-setting-entry is-set">
-                    <label class="label setting-label">Unit Display Name</label>
-                    <input class="input setting-input" id="edit_display_name" name="edit_display_name" value="{self.display_name}" type="text">
-              </li>
+    <ul class="list-input settings-list">
+        <li class="field comp-setting-entry is-set">
+            <label class="label setting-label">Title of this component</label>
+            <input class="input setting-input" id="edit_display_name" name="edit_display_name" value="{self.display_name}" type="text">
+        </li>
 
-              <li class="field comp-setting-entry is-set">
-                    <label class="label setting-label">Please provide the document URL</label>
-                    <input class="input setting-input" id="edit_ms_ocument_url" name="edit_document_url"  value="{self.document_url}" type="text">
-                    <span class="tip setting-help">This should be a URL where anyone can view this document.</span>
-              </li>
+        <li class="field comp-setting-entry is-set">
+            <label class="label setting-label">Please provide the document URL</label>
+            <input class="input setting-input" id="edit_ms_ocument_url" name="edit_document_url"  value="{self.document_url}" type="text">
+            <span class="tip setting-help">This should be a URL where someone can view this document.</span>
+        </li>
 
-               <li class="field comp-setting-entry is-set">
-                    <label class="label setting-label">Please choose one of the following options</label>
-		    <select name=model class="input setting-input selectf" id="output_models">
-			<option value='1' {self.model1}>Add a reference to the original document</option>
-			<option value='2' {self.model2}>Upload the document to the server and then add a reference to it</option>
-			<option value='3' {self.model3}>Embed the original document</option>
-		    </select>
-		</li>
-		<li class="field comp-setting-entry is-set" id='add_reference_name'>
-		     <label class="label setting-label">Text to use for the reference</label>
-		    <input class="input setting-input" id="edit_reference_name" name="edit_reference_name"  value="{self.reference_name}" type="text">	
-              </li>
-
-          </ul>
+       <li class="field comp-setting-entry is-set">
+            <label class="label setting-label">Please choose one of the following options</label>
+            <select name=model class="input setting-input selectf" id="output_models">
+            <option value='1' {self.model1}>Add a reference to the original document</option>
+            <option value='2' {self.model2}>Upload the document to the server and then add a reference to it</option>
+            <option value='3' {self.model3}>Embed the original document</option>
+            </select>
+            <span class="tip setting-help">This specifies how you want the document to appear inside the unit.</span>
+        </li>
+        
+        <li class="field comp-setting-entry is-set" id='add_reference_name'>
+            <label class="label setting-label">Text to use for the reference</label>
+            <input class="input setting-input" id="edit_reference_name" name="edit_reference_name"  value="{self.reference_name}" type="text">	
+            <span class="tip setting-help">This specifies the link text.</span>
+        </li>
+    </ul>
 
     <div class="xblock-actions">
         <span class="xblock-editor-error-message"></span>
