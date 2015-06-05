@@ -5,6 +5,7 @@ import textwrap
 import pkg_resources
 import urllib2
 import mimetypes
+import json
 
 from xblock.core import XBlock
 from xblock.fragment import Fragment
@@ -21,7 +22,7 @@ from xmodule.contentstore.django import contentstore
 from xmodule.contentstore.content import StaticContent
 from opaque_keys.edx.keys import CourseKey
 LOG = logging.getLogger(__name__)
-
+import re
 
 """ easy for develop, to be removed"""
 
@@ -245,17 +246,7 @@ class FileStorageXBlock(XBlock):
         if self.output_model == "3":
 
             document_url = submissions['document_url']
-            document_url = document_url.replace('view.aspx', 'embed').replace('redir', 'embed')
-
-            scheme, netloc, path, query_string, fragment = urlsplit(document_url)
-            query_params = parse_qs(query_string)
-            query_params['action'] = ['embedview']
-            query_params['em'] = ['2']
-            new_query_string = urlencode(query_params, doseq=True)
-
-            document_url = urlunsplit((scheme, netloc, path, new_query_string, fragment))
-
-            self.output_code = MS_EMBED_CODE_TEMPLATE.format(document_url)
+            self.output_code = filter.get_embed_code(url=document_url)
 
 	    self.model3 = "SELECTED=selected"
 	    self.model2 = ""
@@ -276,3 +267,104 @@ class FileStorageXBlock(XBlock):
                 </vertical_demo>
              """),
         ]
+
+class filter():
+
+    @staticmethod
+    def get_embed_code(url):
+
+        youtube_regex = '(https?:\/\/(www\.)?)(youtube\.com|youtu\.be|youtube\.googleapis.com)\/(?:embed\/|v\/|watch\?v=|watch\?.+&amp;v=|watch\?.+&v=)?((\w|-){11})(.*?)'
+
+        matched = re.match(youtube_regex, url)
+
+        if matched is not None:
+            embed_url = "http://www.youtube.com/oembed?url=" + matched.group() + "&format=json";
+            res = json.load(urllib2.urlopen(embed_url))
+            return res['html']
+
+        onedrive_regex = '(https?:\/\/(onedrive\.)?)(live\.com)'
+
+        matched = re.match(onedrive_regex, url)
+
+        if matched is not None:
+            document_url = url.replace('view.aspx', 'embed').replace('redir', 'embed')
+            return MS_EMBED_CODE_TEMPLATE.format(document_url)
+
+        google_document_regex = '(https?:\/\/(docs\.)?)(google\.com)\/(document|spreadsheets)'
+
+        matched = re.match(google_document_regex, url)
+
+        if matched is not None:
+            embed_code = MS_EMBED_CODE_TEMPLATE.format(url)
+            return embed_code
+
+        google_presentation_regex = '(https?:\/\/(docs\.)?)(google\.com)\/(presentation)'
+
+        matched = re.match(google_presentation_regex, url)
+
+        if matched is not None:
+            embed_code = MS_EMBED_CODE_TEMPLATE.format(url.replace('pub', 'embed'))
+            return embed_code
+
+        ted_regex = '(https?:\/\/(www\.)?)(ted\.com)\/talks'
+
+        matched = re.match(ted_regex, url)
+
+        if matched is not None:
+            embed_url = "http://www.ted.com/services/v1/oembed.json?url=" + url
+            res = json.load(urllib2.urlopen(embed_url))
+            return res['html']
+
+        vimeo_regex = 'https?:\/\/(www\.)?vimeo\.com\/'
+
+        matched = re.match(vimeo_regex, url)
+
+        if matched is not None:
+            embed_url = "https://vimeo.com/api/oembed.json?url=" + url
+            res = json.load(urllib2.urlopen(embed_url))
+            return res['html']
+
+        office_mix_regex = '(https?:\/\/(www\.)?)(mix\.office\.com)/watch'
+
+        matched = re.match(office_mix_regex, url)
+
+        if matched is not None:
+            embed_url = "https://mix.office.com/oembed/?url=" + url
+            res = json.load(urllib2.urlopen(embed_url))
+            return res['html']
+
+        slideshare_regex = 'https?:\/\/(www\.)?slideshare\.net'
+
+        matched = re.match(slideshare_regex, url)
+
+        if matched is not None:
+            embed_url = "http://www.slideshare.net/api/oembed/2?url=" + url + "&format=json"
+            res = json.load(urllib2.urlopen(embed_url))
+            return res['html']
+
+        issuu_regex = 'https?:\/\/(www\.)?issuu\.com'
+
+        matched = re.match(issuu_regex, url)
+
+        if matched is not None:
+            embed_url = "http://issuu.com/oembed?url=" + url + "&format=json"
+            res = json.load(urllib2.urlopen(embed_url))
+            return res['html']
+
+        screenr_regex = 'https?:\/\/(www\.)?screenr\.com'
+
+        matched = re.match(screenr_regex, url)
+
+        if matched is not None:
+            embed_url = "http://www.screenr.com/api/oembed.json?url=" + url + "&format=json"
+            res = json.load(urllib2.urlopen(embed_url))
+            return res['html']
+
+        soundcloud_regex = 'https?:\/\/(www\.)?soundcloud\.com'
+
+        matched = re.match(soundcloud_regex, url)
+
+        if matched is not None:
+            embed_url = "http://soundcloud.com/oembed?url=" + url + "&format=json"
+            res = json.load(urllib2.urlopen(embed_url))
+            return res['html']
