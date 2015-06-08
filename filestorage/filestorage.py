@@ -295,8 +295,7 @@ class filter():
         matched = re.match(google_document_regex, url)
 
         if matched is not None:
-            embed_code = MS_EMBED_CODE_TEMPLATE.format(url)
-            return embed_code
+            return '<iframe src="' + url + '?embedded=true"></iframe>'
 
         google_presentation_regex = '(https?:\/\/(docs\.)?)(google\.com)\/(presentation)'
 
@@ -368,3 +367,13 @@ class filter():
             embed_url = "http://soundcloud.com/oembed?url=" + url + "&format=json"
             res = json.load(urllib2.urlopen(embed_url))
             return res['html']
+
+        box_regex = 'https?:\/\/(app\.)?box\.com'
+
+        matched = re.match(box_regex, url)
+
+        if matched is not None:
+            embed_code = MS_EMBED_CODE_TEMPLATE.format(url.replace('/s/', '/embed/preview/'))
+            return embed_code
+
+        return 'Cannot embed the document'
