@@ -24,13 +24,9 @@ from opaque_keys.edx.keys import CourseKey
 LOG = logging.getLogger(__name__)
 import re
 
-""" easy for develop, to be removed"""
-
-DEFAULT_DOCUMENT_URL = (
-    'https://onedrive.live.com/embed?cid=ADC6477D8F22FD9D&resid=ADC6477D8F22FD9D%21104&'
-    'authkey=AFWEOfGpKb8L29w&em=2&wdStartOn=1'
-)
-MS_EMBED_CODE_TEMPLATE = textwrap.dedent("""
+# TODO: Update default document URL
+DEFAULT_DOCUMENT_URL = ('https://onedrive.live.com/embed?cid=ADC6477D8F22FD9D&resid=ADC6477D8F22FD9D%21104&authkey=AFWEOfGpKb8L29w&em=2&wdStartOn=1')
+EMBED_CODE_TEMPLATE = textwrap.dedent("""
     <iframe
         src="{}"
         frameborder="0"
@@ -41,7 +37,6 @@ MS_EMBED_CODE_TEMPLATE = textwrap.dedent("""
         webkitallowfullscreen="true">
     </iframe>
 """)
-
 
 
 class FileStorageXBlock(XBlock):
@@ -113,14 +108,13 @@ class FileStorageXBlock(XBlock):
             "Copy the embed code into this field."
         ),
         scope=Scope.settings,
-        default=MS_EMBED_CODE_TEMPLATE.format(DEFAULT_DOCUMENT_URL)
+        default=EMBED_CODE_TEMPLATE.format(DEFAULT_DOCUMENT_URL)
     )
 
     def resource_string(self, path):
         """Handy helper for getting resources from our kit."""
         data = pkg_resources.resource_string(__name__, path)
         return data.decode("utf8")
-
 
     def student_view(self, context=None):
         """
@@ -133,7 +127,6 @@ class FileStorageXBlock(XBlock):
         frag.add_javascript(self.resource_string("static/js/src/filestorage.js"))
         frag.initialize_js('FileStorageXBlock')
         return frag
-
 
     def studio_view(self, context=None):
         """
@@ -163,42 +156,33 @@ class FileStorageXBlock(XBlock):
         self.reference_name = submissions['reference_name']
         self.output_model = submissions['model']
 
-
-        if 'display_name' in submissions:
-
-            self.display_name = submissions['display_name']
-
-
+        # ouput model = 1 means add a reference to the document
         if self.output_model == "1":
-
             self.output_code = "<a href="+self.document_url+" target='_blank'>"+self.reference_name+"</a>"
 
 	    self.model1 = "SELECTED=selected"
 	    self.model2 = ""
 	    self.model3 = ""
 
+        # output model = 2 means upload the document and add a reference to it
         if self.output_model == "2":
-
-            document_url = self.document_url
-            document_url = document_url.replace('embed', 'download')
+            download_url = filter.get_download_url(self.document_url)
             reference_name = self.reference_name.encode('utf8')
-
             course_key = CourseKey.from_string(str(self.course_id))
 
-            onedrive_response = urllib2.urlopen(self.document_url)
+            try:
+                download_response = urllib2.urlopen(download_url)
+                file = download_response.read()
+            except:
+                self.output_code = "Unable to upload the document: " + self.document_url
+                return {'result': 'error'}
 
-            file = onedrive_response.read()
-
-            ext = mimetypes.guess_extension(onedrive_response.headers.type, strict=False)
-
-
+            ext = mimetypes.guess_extension(download_response.headers.type, strict=False)
             file_name = reference_name.replace(" ", "_") + ext
-
             content_loc = StaticContent.compute_location(course_key, file_name)
-
-            sc_partial = partial(StaticContent, content_loc, file_name, onedrive_response.headers.type)
-
+            sc_partial = partial(StaticContent, content_loc, file_name, download_response.headers.type)
             content = sc_partial(file)
+
             tempfile_path = None
 
             # first let's see if a thumbnail can be created
@@ -243,17 +227,15 @@ class FileStorageXBlock(XBlock):
 	    self.model1 = ""
 	    self.model3 = ""
 
+        # output model = 3 means embed the document
         if self.output_model == "3":
-
-            document_url = submissions['document_url']
-            self.output_code = filter.get_embed_code(url=document_url)
+            self.output_code = filter.get_embed_code(url=self.document_url)
 
 	    self.model3 = "SELECTED=selected"
 	    self.model2 = ""
 	    self.model1 = ""
 
         return {'result': 'success'}
-
 
     @staticmethod
     def workbench_scenarios():
@@ -268,13 +250,16 @@ class FileStorageXBlock(XBlock):
              """),
         ]
 
-class filter():
 
+# Helper class to manage filtering the document URL depending upon how it is intented to be used        
+class filter():
+    # match the url against url patterns for various services to determine the source of the document and then convert the url into an embed code depending upon whether the service supports OEmbed protocol or
+    # whether we can do the conversion using just string replacement.
     @staticmethod
     def get_embed_code(url):
-
+        url = url.strip()
+        
         youtube_regex = '(https?:\/\/(www\.)?)(youtube\.com|youtu\.be|youtube\.googleapis.com)\/(?:embed\/|v\/|watch\?v=|watch\?.+&amp;v=|watch\?.+&v=)?((\w|-){11})(.*?)'
-
         matched = re.match(youtube_regex, url)
 
         if matched is not None:
@@ -282,31 +267,36 @@ class filter():
             res = json.load(urllib2.urlopen(embed_url))
             return res['html']
 
-        onedrive_regex = '(https?:\/\/(onedrive\.)?)(live\.com)'
+        odb_regex = 'https?:\/\/((\w|-)+)-my.sharepoint.com\/'
+        matched = re.match(odb_regex, url)
 
+        if matched is not None:
+            document_url = url.replace('action=default', 'action=embedview')
+            LOG.info('odb: ')
+            LOG.info(document_url)
+            return EMBED_CODE_TEMPLATE.format(document_url)
+            
+        onedrive_regex = '(https?:\/\/(onedrive\.)?)(live\.com)'
         matched = re.match(onedrive_regex, url)
 
         if matched is not None:
             document_url = url.replace('view.aspx', 'embed').replace('redir', 'embed')
-            return MS_EMBED_CODE_TEMPLATE.format(document_url)
+            return EMBED_CODE_TEMPLATE.format(document_url)
 
         google_document_regex = '(https?:\/\/(docs\.)?)(google\.com)\/(document|spreadsheets)'
-
         matched = re.match(google_document_regex, url)
 
         if matched is not None:
             return '<iframe src="' + url + '?embedded=true"></iframe>'
 
         google_presentation_regex = '(https?:\/\/(docs\.)?)(google\.com)\/(presentation)'
-
         matched = re.match(google_presentation_regex, url)
 
         if matched is not None:
-            embed_code = MS_EMBED_CODE_TEMPLATE.format(url.replace('pub', 'embed'))
+            embed_code = EMBED_CODE_TEMPLATE.format(url.replace('pub', 'embed'))
             return embed_code
 
         ted_regex = '(https?:\/\/(www\.)?)(ted\.com)\/talks'
-
         matched = re.match(ted_regex, url)
 
         if matched is not None:
@@ -315,7 +305,6 @@ class filter():
             return res['html']
 
         vimeo_regex = 'https?:\/\/(www\.)?vimeo\.com\/'
-
         matched = re.match(vimeo_regex, url)
 
         if matched is not None:
@@ -324,7 +313,6 @@ class filter():
             return res['html']
 
         office_mix_regex = '(https?:\/\/(www\.)?)(mix\.office\.com)/watch'
-
         matched = re.match(office_mix_regex, url)
 
         if matched is not None:
@@ -333,7 +321,6 @@ class filter():
             return res['html']
 
         slideshare_regex = 'https?:\/\/(www\.)?slideshare\.net'
-
         matched = re.match(slideshare_regex, url)
 
         if matched is not None:
@@ -342,7 +329,6 @@ class filter():
             return res['html']
 
         issuu_regex = 'https?:\/\/(www\.)?issuu\.com'
-
         matched = re.match(issuu_regex, url)
 
         if matched is not None:
@@ -351,7 +337,6 @@ class filter():
             return res['html']
 
         screenr_regex = 'https?:\/\/(www\.)?screenr\.com'
-
         matched = re.match(screenr_regex, url)
 
         if matched is not None:
@@ -360,7 +345,6 @@ class filter():
             return res['html']
 
         soundcloud_regex = 'https?:\/\/(www\.)?soundcloud\.com'
-
         matched = re.match(soundcloud_regex, url)
 
         if matched is not None:
@@ -369,11 +353,31 @@ class filter():
             return res['html']
 
         box_regex = 'https?:\/\/(app\.)?box\.com'
-
         matched = re.match(box_regex, url)
 
         if matched is not None:
-            embed_code = MS_EMBED_CODE_TEMPLATE.format(url.replace('/s/', '/embed/preview/'))
+            embed_code = EMBED_CODE_TEMPLATE.format(url.replace('/s/', '/embed/preview/'))
             return embed_code
 
-        return 'Cannot embed the document'
+        return EMBED_CODE_TEMPLATE.format(url)
+
+    # match the url against url patterns for various services to determine the source of the document and then convert the url into a download url
+    @staticmethod
+    def get_download_url(url):
+        url = url.strip()
+
+        odb_regex = 'https?:\/\/((\w|-)+)-my.sharepoint.com\/'
+        matched = re.match(odb_regex, url)
+
+        if matched is not None:
+            download_url = url.replace('action=default', 'action=download')
+            return download_url
+            
+        onedrive_regex = '(https?:\/\/(onedrive\.)?)(live\.com)'
+        matched = re.match(onedrive_regex, url)
+
+        if matched is not None:
+            download_url = url.replace('\/embed', '\/download')
+            return download_url
+
+        return url
