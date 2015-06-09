@@ -15,9 +15,16 @@
     min-height: 569px;
     display: block;
     margin: 0 auto;
+    border: 1px solid #cccccc;
 }
 
 .filestorage_block_wrapper iframe.no-width-height{
     top: 0;
     left: 0;
+}
+
+.filestorage_message {
+    width: 100%;
+    margin: 5px 0px 0px 0px;
+    font-size: 12px;
 }

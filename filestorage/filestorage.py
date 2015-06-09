@@ -47,65 +47,65 @@ class FileStorageXBlock(XBlock):
 
     document_url = String(
         display_name="Document URL",
-        help=(
-            "Navigate to the document in your browser and ensure that it is public. Copy its URL and paste it into this field."
-        ),
+        help="Navigate to the document in your browser and ensure that it is public. Copy its URL and paste it into this field.",
         scope=Scope.settings,
         default=DEFAULT_DOCUMENT_URL
     )
 
     reference_name = String(
         display_name="Reference Name",
-        help=(
-            "The link text."
-        ),
+        help="The link text.",
         scope=Scope.settings,
         default="Click here"
     )
 
     output_model = String(
         display_name="Ouput Model",
-        help=(
-            "Currently selected option for how to insert the document into the unit."
-        ),
+        help="Currently selected option for how to insert the document into the unit.",
         scope=Scope.settings,
         default="3"
     )
     
     model1 = String(
         display_name="Model1 preselection",
-        help=(
-            "Previous selection."
-        ),
+        help="Previous selection.",
         scope=Scope.settings,
         default=""
     )	
 
     model2 = String(
         display_name="Model2 preselection",
-        help=(
-            "Previous selection."
-        ),
+        help="Previous selection.",
         scope=Scope.settings,
         default=""
     )	
 
     model3 = String(
         display_name="Model3 preselection",
-        help=(
-            "Previous selection."
-        ),
+        help="Previous selection.",
         scope=Scope.settings,
         default="selected=selected"
     )	
 
     output_code = String(
         display_name="Output Iframe Embed Code",
-        help=(
-            "Copy the embed code into this field."
-        ),
+        help="Copy the embed code into this field.",
         scope=Scope.settings,
         default=EMBED_CODE_TEMPLATE.format(DEFAULT_DOCUMENT_URL)
+    )
+
+    message = String(
+        display_name="Document display status message",
+        help="Message to help students in case of errors.",
+        scope=Scope.settings,
+        default=""
+    )
+
+    message_display_state = String(
+        display_name="Whether to display the status message",
+        help="Determines whether to display the message to help students in case of errors.",
+        scope=Scope.settings,
+        default="none"
     )
 
     def resource_string(self, path):
@@ -156,6 +156,8 @@ class FileStorageXBlock(XBlock):
         # ouput model = 1 means add a reference to the document
         if self.output_model == "1":
             self.output_code = "<a href="+self.document_url+" target='_blank'>"+self.reference_name+"</a>"
+            self.message = ""
+            self.message_display_state = "none"
 
 	    self.model1 = "SELECTED=selected"
 	    self.model2 = ""
@@ -168,8 +170,6 @@ class FileStorageXBlock(XBlock):
             course_key = CourseKey.from_string(str(self.course_id))
 
             try:
-                LOG.info('download url')
-                LOG.info(download_url)
                 download_response = urllib2.urlopen(download_url)
                 file = download_response.read()
             except:
@@ -208,19 +208,8 @@ class FileStorageXBlock(XBlock):
             external_url = settings.LMS_BASE + asset_url
 
             self.output_code = "<a href="+asset_url+" target='_blank'>"+reference_name+"</a>"
-
-            LOG.info('readback: ')
-            LOG.info(readback)
-            LOG.info('locked: ')
-            LOG.info(locked)
-            LOG.info('url')
-            LOG.info(asset_url)
-            LOG.info('external_url')
-            LOG.info(external_url)
-            LOG.info('portable_url')
-            LOG.info(StaticContent.get_static_path_from_location(content.location))
-            LOG.info('course id')
-            LOG.info(self.course_id)
+            self.message = ""
+            self.message_display_state = "none"
 
 	    self.model2 = "SELECTED=selected"
 	    self.model1 = ""
@@ -229,6 +218,8 @@ class FileStorageXBlock(XBlock):
         # output model = 3 means embed the document
         if self.output_model == "3":
             self.output_code = filter.get_embed_code(url=self.document_url)
+            self.message = "Note: Some services may require you to be signed into them to access documents stored there."
+            self.message_display_state = "block"
 
 	    self.model3 = "SELECTED=selected"
 	    self.model2 = ""
