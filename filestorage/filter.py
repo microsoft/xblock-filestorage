@@ -8,20 +8,21 @@ import logging
 LOG = logging.getLogger(__name__)
 import re
 
-EMBED_CODE_TEMPLATE = textwrap.dedent("""
-    <iframe
-        src="{}"
-        frameborder="0"
-        width="960"
-        height="569"
-        allowfullscreen="true"
-        mozallowfullscreen="true"
-        webkitallowfullscreen="true">
-    </iframe>
-""")
 
-# Helper class to manage filtering the document URL depending upon how it is intented to be used
-class filter():
+# Helper class to map the document URL into a form required for adding to the courseware, depending upon how it is intended to be used
+class Filter():
+    EMBED_CODE_TEMPLATE = textwrap.dedent("""
+        <iframe
+            src="{}"
+            frameborder="0"
+            width="960"
+            height="569"
+            allowfullscreen="true"
+            mozallowfullscreen="true"
+            webkitallowfullscreen="true">
+        </iframe>
+    """)
+
     # match the url against url patterns for various services to determine the source of the document and then convert the url into an embed code depending upon whether the service supports OEmbed protocol or
     # whether we can do the conversion using just string replacement.
     @staticmethod
@@ -50,7 +51,7 @@ class filter():
             
             LOG.info('odb: ')
             LOG.info(document_url)
-            return EMBED_CODE_TEMPLATE.format(document_url)
+            return Filter.EMBED_CODE_TEMPLATE.format(document_url)
 
         # OneDrive (for consumers)
         onedrive_regex = '(https?:\/\/(onedrive\.)?)(live\.com)'
@@ -58,7 +59,7 @@ class filter():
 
         if matched is not None:
             document_url = url.replace('view.aspx', 'embed').replace('redir', 'embed')
-            return EMBED_CODE_TEMPLATE.format(document_url)
+            return Filter.EMBED_CODE_TEMPLATE.format(document_url)
 
         # Google doc
         google_document_regex = '(https?:\/\/(docs\.)?)(google\.com)\/(document|spreadsheets)'
@@ -72,7 +73,7 @@ class filter():
         matched = re.match(google_presentation_regex, url)
 
         if matched is not None:
-            embed_code = EMBED_CODE_TEMPLATE.format(url.replace('pub', 'embed'))
+            embed_code = Filter.EMBED_CODE_TEMPLATE.format(url.replace('pub', 'embed'))
             return embed_code
 
         # TED talks
@@ -143,10 +144,10 @@ class filter():
         matched = re.match(box_regex, url)
 
         if matched is not None:
-            embed_code = EMBED_CODE_TEMPLATE.format(url.replace('/s/', '/embed/preview/'))
+            embed_code = Filter.EMBED_CODE_TEMPLATE.format(url.replace('/s/', '/embed/preview/'))
             return embed_code
 
-        return EMBED_CODE_TEMPLATE.format(url)
+        return Filter.EMBED_CODE_TEMPLATE.format(url)
 
     # match the url against url patterns for various services to determine the source of the document and then convert the url into a download url
     @staticmethod

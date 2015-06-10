@@ -1,4 +1,8 @@
-"""TO-DO: Write a description of what this XBlock is."""
+""" 
+The “File Storage XBlock” allows course staffers to add files stored in various internet file storage services to the courseware (courseware, course info and syllabus) 
+by adding a link through an advanced component that they create in edX’s Studio authoring tool. The files can be added either as embedded content, 
+or as links to the files in their original location, or as links to the files after uploading them to the edX server itself.
+""" 
 
 import textwrap
 
@@ -19,22 +23,9 @@ from xmodule.contentstore.django import contentstore
 from xmodule.contentstore.content import StaticContent
 from opaque_keys.edx.keys import CourseKey
 LOG = logging.getLogger(__name__)
-from filter import filter
+from filter import Filter
 
-# TODO: Update default document URL
 DEFAULT_DOCUMENT_URL = ('https://onedrive.live.com/embed?cid=ADC6477D8F22FD9D&resid=ADC6477D8F22FD9D%21104&authkey=AFWEOfGpKb8L29w&em=2&wdStartOn=1')
-EMBED_CODE_TEMPLATE = textwrap.dedent("""
-    <iframe
-        src="{}"
-        frameborder="0"
-        width="960"
-        height="569"
-        allowfullscreen="true"
-        mozallowfullscreen="true"
-        webkitallowfullscreen="true">
-    </iframe>
-""")
-
 
 class FileStorageXBlock(XBlock):
 
@@ -91,21 +82,21 @@ class FileStorageXBlock(XBlock):
         display_name="Output Iframe Embed Code",
         help="Copy the embed code into this field.",
         scope=Scope.settings,
-        default=EMBED_CODE_TEMPLATE.format(DEFAULT_DOCUMENT_URL)
+        default=Filter.EMBED_CODE_TEMPLATE.format(DEFAULT_DOCUMENT_URL)
     )
 
     message = String(
         display_name="Document display status message",
         help="Message to help students in case of errors.",
         scope=Scope.settings,
-        default=""
+        default="Note: Some services may require you to be signed into them to access documents stored there."
     )
 
     message_display_state = String(
         display_name="Whether to display the status message",
         help="Determines whether to display the message to help students in case of errors.",
         scope=Scope.settings,
-        default="none"
+        default="block"
     )
 
     def resource_string(self, path):
@@ -165,7 +156,7 @@ class FileStorageXBlock(XBlock):
 
         # output model = 2 means upload the document and add a reference to it
         if self.output_model == "2":
-            download_url = filter.get_download_url(self.document_url)
+            download_url = Filter.get_download_url(self.document_url)
             reference_name = self.reference_name.encode('utf8')
             course_key = CourseKey.from_string(str(self.course_id))
 
@@ -217,7 +208,7 @@ class FileStorageXBlock(XBlock):
 
         # output model = 3 means embed the document
         if self.output_model == "3":
-            self.output_code = filter.get_embed_code(url=self.document_url)
+            self.output_code = Filter.get_embed_code(url=self.document_url)
             self.message = "Note: Some services may require you to be signed into them to access documents stored there."
             self.message_display_state = "block"
 

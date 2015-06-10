@@ -22,8 +22,8 @@ def package_data(pkg, roots):
 
 setup(
     name='xblock-filestorage',
-    version='0.1',
-    description='FileStorage XBlock',   # TODO: write a better description.
+    version='0.5',
+    description='FileStorage XBlock for adding external documents to courseware',
     packages=[
         'filestorage',
     ],
