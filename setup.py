@@ -22,7 +22,7 @@ def package_data(pkg, roots):
 
 setup(
     name='xblock-filestorage',
-    version='0.5',
+    version='0.6',
     description='FileStorage XBlock for adding external documents to courseware',
     packages=[
         'filestorage',

@@ -1,7 +1,7 @@
 """ 
 The “File Storage XBlock” allows course staffers to add files stored in various internet file storage services to the courseware (courseware, course info and syllabus) 
 by adding a link through an advanced component that they create in edX’s Studio authoring tool. The files can be added either as embedded content, 
-or as links to the files in their original location, or as links to the files after uploading them to the edX server itself.
+or as links to the files in their original location.
 """ 
 
 import textwrap
@@ -54,7 +54,7 @@ class FileStorageXBlock(XBlock):
         display_name="Ouput Model",
         help="Currently selected option for how to insert the document into the unit.",
         scope=Scope.settings,
-        default="3"
+        default="1"
     )
     
     model1 = String(
@@ -71,12 +71,12 @@ class FileStorageXBlock(XBlock):
         default=""
     )	
 
-    model3 = String(
-        display_name="Model3 preselection",
-        help="Previous selection.",
-        scope=Scope.settings,
-        default="selected=selected"
-    )	
+    # model3 = String(
+        # display_name="Model3 preselection",
+        # help="Previous selection.",
+        # scope=Scope.settings,
+        # default="selected=selected"
+    # )	
 
     output_code = String(
         display_name="Output Iframe Embed Code",
@@ -144,77 +144,77 @@ class FileStorageXBlock(XBlock):
         self.reference_name = submissions['reference_name']
         self.output_model = submissions['model']
 
-        # ouput model = 1 means add a reference to the document
+        # output model = 1 means embed the document
         if self.output_model == "1":
-            self.output_code = "<a href="+self.document_url+" target='_blank'>"+self.reference_name+"</a>"
-            self.message = ""
-            self.message_display_state = "none"
-
-	    self.model1 = "SELECTED=selected"
-	    self.model2 = ""
-	    self.model3 = ""
-
-        # output model = 2 means upload the document and add a reference to it
-        if self.output_model == "2":
-            download_url = Filter.get_download_url(self.document_url)
-            reference_name = self.reference_name.encode('utf8')
-            course_key = CourseKey.from_string(str(self.course_id))
-
-            try:
-                download_response = urllib2.urlopen(download_url)
-                file = download_response.read()
-            except:
-                self.output_code = "Unable to upload the document: " + self.document_url
-                return {'result': 'error'}
-
-            ext = mimetypes.guess_extension(download_response.headers.type, strict=False)
-            file_name = reference_name.replace(" ", "_") + ext
-            content_loc = StaticContent.compute_location(course_key, file_name)
-            sc_partial = partial(StaticContent, content_loc, file_name, download_response.headers.type)
-            content = sc_partial(file)
-
-            tempfile_path = None
-
-            # first let's see if a thumbnail can be created
-            (thumbnail_content, thumbnail_location) = contentstore().generate_thumbnail(
-                content,
-                tempfile_path=tempfile_path,
-            )
-
-            del_cached_content(thumbnail_location)
-            
-            # now store thumbnail location only if we could create it
-            if thumbnail_content is not None:
-                content.thumbnail_location = thumbnail_location
-
-            # then commit the content
-            contentstore().save(content)
-            del_cached_content(content.location)
-
-            # readback the saved content - we need the database timestamp
-            readback = contentstore().find(content.location)
-            locked = getattr(content, 'locked', False)
-
-            asset_url = StaticContent.serialize_asset_key_with_slash(content.location)
-            external_url = settings.LMS_BASE + asset_url
-
-            self.output_code = "<a href="+asset_url+" target='_blank'>"+reference_name+"</a>"
-            self.message = ""
-            self.message_display_state = "none"
-
-	    self.model2 = "SELECTED=selected"
-	    self.model1 = ""
-	    self.model3 = ""
-
-        # output model = 3 means embed the document
-        if self.output_model == "3":
             self.output_code = Filter.get_embed_code(url=self.document_url)
             self.message = "Note: Some services may require you to be signed into them to access documents stored there."
             self.message_display_state = "block"
 
-	    self.model3 = "SELECTED=selected"
+	    self.model1 = "SELECTED=selected"
 	    self.model2 = ""
+	    # self.model3 = ""
+
+        # output model = 2 means add a reference to the document
+        if self.output_model == "2":
+            self.output_code = "<a href="+self.document_url+" target='_blank'>"+self.reference_name+"</a>"
+            self.message = ""
+            self.message_display_state = "none"
+
 	    self.model1 = ""
+	    self.model2 = "SELECTED=selected"
+	    # self.model3 = ""
+
+        # output model = 3 means upload the document and add a reference to it
+        # if self.output_model == "3":
+            # download_url = Filter.get_download_url(self.document_url)
+            # reference_name = self.reference_name.encode('utf8')
+            # course_key = CourseKey.from_string(str(self.course_id))
+
+            # try:
+                # download_response = urllib2.urlopen(download_url)
+                # file = download_response.read()
+            # except:
+                # self.output_code = "Unable to upload the document: " + self.document_url
+                # return {'result': 'error'}
+
+            # ext = mimetypes.guess_extension(download_response.headers.type, strict=False)
+            # file_name = reference_name.replace(" ", "_") + ext
+            # content_loc = StaticContent.compute_location(course_key, file_name)
+            # sc_partial = partial(StaticContent, content_loc, file_name, download_response.headers.type)
+            # content = sc_partial(file)
+
+            # tempfile_path = None
+
+            # # first let's see if a thumbnail can be created
+            # (thumbnail_content, thumbnail_location) = contentstore().generate_thumbnail(
+                # content,
+                # tempfile_path=tempfile_path,
+            # )
+
+            # del_cached_content(thumbnail_location)
+            
+            # # now store thumbnail location only if we could create it
+            # if thumbnail_content is not None:
+                # content.thumbnail_location = thumbnail_location
+
+            # # then commit the content
+            # contentstore().save(content)
+            # del_cached_content(content.location)
+
+            # # readback the saved content - we need the database timestamp
+            # readback = contentstore().find(content.location)
+            # locked = getattr(content, 'locked', False)
+
+            # asset_url = StaticContent.serialize_asset_key_with_slash(content.location)
+            # external_url = settings.LMS_BASE + asset_url
+
+            # self.output_code = "<a href="+asset_url+" target='_blank'>"+reference_name+"</a>"
+            # self.message = ""
+            # self.message_display_state = "none"
+
+	    # self.model1 = ""
+	    # self.model2 = ""
+	    # self.model3 = "SELECTED=selected"
 
         return {'result': 'success'}
 

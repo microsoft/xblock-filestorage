@@ -150,32 +150,32 @@ class Filter():
         return Filter.EMBED_CODE_TEMPLATE.format(url)
 
     # match the url against url patterns for various services to determine the source of the document and then convert the url into a download url
-    @staticmethod
-    def get_download_url(url):
-        url = url.strip()
+    # @staticmethod
+    # def get_download_url(url):
+        # url = url.strip()
 
-        # OneDrive for Business
-        odb_regex = 'https?:\/\/((\w|-)+)-my.sharepoint.com\/'
-        matched = re.match(odb_regex, url)
+        # # OneDrive for Business
+        # odb_regex = 'https?:\/\/((\w|-)+)-my.sharepoint.com\/'
+        # matched = re.match(odb_regex, url)
 
-        if matched is not None:
-            download_url = url.replace('WopiFrame', 'download').replace('sourcedoc', 'UniqueId')
-            return download_url
+        # if matched is not None:
+            # download_url = url.replace('WopiFrame', 'download').replace('sourcedoc', 'UniqueId')
+            # return download_url
 
-        # OneDrive (for consumers)
-        onedrive_regex = '(https?:\/\/(onedrive\.)?)(live\.com)'
-        matched = re.match(onedrive_regex, url)
+        # # OneDrive (for consumers)
+        # onedrive_regex = '(https?:\/\/(onedrive\.)?)(live\.com)'
+        # matched = re.match(onedrive_regex, url)
 
-        if matched is not None:
-            download_url = url.replace('\/embed', '\/download')
-            return download_url
+        # if matched is not None:
+            # download_url = url.replace('\/embed', '\/download')
+            # return download_url
 
-        # Dropbox files
-        dropbox_regex = 'https?:\/\/(www\.)?dropbox\.com'
-        matched = re.match(dropbox_regex, url)
+        # # Dropbox files
+        # dropbox_regex = 'https?:\/\/(www\.)?dropbox\.com'
+        # matched = re.match(dropbox_regex, url)
 
-        if matched is not None:
-            download_url = url.replace('dl=0', 'dl=1')
-            return download_url
+        # if matched is not None:
+            # download_url = url.replace('dl=0', 'dl=1')
+            # return download_url
 
-        return url
+        # return url
