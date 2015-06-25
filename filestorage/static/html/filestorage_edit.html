@@ -7,13 +7,13 @@
         </li>
 
         <li class="field comp-setting-entry is-set">
-            <label class="label setting-label">Please provide the document URL</label>
+            <label class="label setting-label">The document URL</label>
             <input class="input setting-input" id="edit_ms_ocument_url" name="edit_document_url"  value="{self.document_url}" type="text">
             <span class="tip setting-help">This should be a URL where someone can view this document.</span>
         </li>
 
        <li class="field comp-setting-entry is-set">
-            <label class="label setting-label">Please choose one of the following options</label>
+            <label class="label setting-label">The manner in which the document is displayed</label>
             <select name=model class="input setting-input selectf" id="output_models">
             <option value='1' {self.model1}>Add a reference to the document</option>
             <option value='2' {self.model2}>Upload the document and add a reference to it</option>
@@ -24,8 +24,7 @@
         
         <li class="field comp-setting-entry is-set" id='add_reference_name'>
             <label class="label setting-label">Text to use for the reference</label>
-            <input class="input setting-input" id="edit_reference_name" name="edit_reference_name"  value="{self.reference_name}" type="text">	
-            <span class="tip setting-help">This specifies the link text.</span>
+            <input class="input setting-input" id="edit_reference_name" name="edit_reference_name"  value="{self.reference_name}" type="text" placeholder="Type the text to use for the link">	
         </li>
     </ul>
 

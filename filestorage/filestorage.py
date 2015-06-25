@@ -47,7 +47,7 @@ class FileStorageXBlock(XBlock):
         display_name="Reference Name",
         help="The link text.",
         scope=Scope.settings,
-        default="Click here"
+        default=""
     )
 
     output_model = String(

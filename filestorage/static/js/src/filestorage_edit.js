@@ -4,6 +4,12 @@ function FileStorageXBlock(runtime, element) {
   $(element).find('.save-button').bind('click', function() {
     var handlerUrl = runtime.handlerUrl(element, 'studio_submit');
 
+    var reference_text = $(element).find('input[name=edit_reference_name]').val();
+    if (!reference_text.trim()) {
+        alert("Please enter the text to use for the reference.");
+        return;
+    }
+    
     var data = {
 
       display_name: $(element).find('input[name=edit_display_name]').val(),
@@ -16,8 +22,6 @@ function FileStorageXBlock(runtime, element) {
     $.post(handlerUrl, JSON.stringify(data)).done(function(response) {
       window.location.reload(false);
     });
-
-
 
   });
 
