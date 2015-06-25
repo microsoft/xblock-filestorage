@@ -3,19 +3,24 @@ function FileStorageXBlock(runtime, element) {
 
   $(element).find('.save-button').bind('click', function() {
     var display_name = $(element).find('input[name=edit_display_name]').val().trim();
+    var document_url = $(element).find('input[name=edit_document_url]').val().trim();
+    var model = $(element).find('select[name=model]').val();
+    var reference_text = $(element).find('input[name=edit_reference_name]').val().trim();
+
     if (!display_name) {
       alert("Please enter the title for this component.");
       return;
     }
 
-    var document_url = $(element).find('input[name=edit_document_url]').val().trim();
     if (!document_url) {
       alert("Please enter the document URL.");
       return;
     }
 
-    var model = $(element).find('select[name=model]').val();
-    var reference_text = $(element).find('input[name=edit_reference_name]').val().trim();
+    if ((model != 1) && /<iframe /i.test(document_url)) {
+        alert("You have entered an embed code as the document URL. You need to either choose to embed the document or enter a URL for the document.");
+        return;
+    }
 
     if ((model == 2) && !reference_text) {
       alert("Please enter the text to use for the reference.");

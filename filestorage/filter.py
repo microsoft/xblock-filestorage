@@ -28,12 +28,21 @@ class Filter():
     @staticmethod
     def get_embed_code(url):
         url = url.strip()
+        
+        # check if it already is an embed code
+        embed_code_regex = '<iframe '
+        matched = re.match(embed_code_regex, url, re.IGNORECASE)
+
+        if matched is not None:
+            return url
+        
+        # check which service the URL is from and try to get its embed code using the OEmbed protocol
         scheme, netloc, path, query_string, fragment = urlsplit(url)
         query_params = parse_qs(query_string)
 
         # youtube
         youtube_regex = '(https?:\/\/(www\.)?)(youtube\.com|youtu\.be|youtube\.googleapis.com)\/(?:embed\/|v\/|watch\?v=|watch\?.+&amp;v=|watch\?.+&v=)?((\w|-){11})(.*?)'
-        matched = re.match(youtube_regex, url)
+        matched = re.match(youtube_regex, url, re.IGNORECASE)
 
         if matched is not None:
             embed_url = "http://www.youtube.com/oembed?url=" + matched.group() + "&format=json";
@@ -42,35 +51,36 @@ class Filter():
 
         # OneDrive for Business
         odb_regex = 'https?:\/\/((\w|-)+)-my.sharepoint.com\/'
-        matched = re.match(odb_regex, url)
+        matched = re.match(odb_regex, url, re.IGNORECASE)
 
         if matched is not None:
             query_params['action'] = ['embedview']
             new_query_string = urlencode(query_params, doseq=True)
             document_url = urlunsplit((scheme, netloc, path, new_query_string, fragment))            
-            
-            LOG.info('odb: ')
-            LOG.info(document_url)
             return Filter.EMBED_CODE_TEMPLATE.format(document_url)
 
         # OneDrive (for consumers)
         onedrive_regex = '(https?:\/\/(onedrive\.)?)(live\.com)'
-        matched = re.match(onedrive_regex, url)
+        matched = re.match(onedrive_regex, url, re.IGNORECASE)
 
         if matched is not None:
-            document_url = url.replace('view.aspx', 'embed').replace('redir', 'embed')
+            new_path = path.replace('view.aspx', 'embed').replace('redir', 'embed')
+            query_params = parse_qs(query_string)
+            query_params['em'] = ['2']
+            new_query_string = urlencode(query_params, doseq=True)
+            document_url = urlunsplit((scheme, netloc, new_path, new_query_string, fragment))
             return Filter.EMBED_CODE_TEMPLATE.format(document_url)
 
         # Google doc
         google_document_regex = '(https?:\/\/(docs\.)?)(google\.com)\/(document|spreadsheets)'
-        matched = re.match(google_document_regex, url)
+        matched = re.match(google_document_regex, url, re.IGNORECASE)
 
         if matched is not None:
             return '<iframe src="' + url + '?embedded=true"></iframe>'
 
         # Google presentation
         google_presentation_regex = '(https?:\/\/(docs\.)?)(google\.com)\/(presentation)'
-        matched = re.match(google_presentation_regex, url)
+        matched = re.match(google_presentation_regex, url, re.IGNORECASE)
 
         if matched is not None:
             embed_code = Filter.EMBED_CODE_TEMPLATE.format(url.replace('pub', 'embed'))
@@ -78,7 +88,7 @@ class Filter():
 
         # TED talks
         ted_regex = '(https?:\/\/(www\.)?)(ted\.com)\/talks'
-        matched = re.match(ted_regex, url)
+        matched = re.match(ted_regex, url, re.IGNORECASE)
 
         if matched is not None:
             embed_url = "http://www.ted.com/services/v1/oembed.json?url=" + url
@@ -87,7 +97,7 @@ class Filter():
 
         # Vimeo videos
         vimeo_regex = 'https?:\/\/(www\.)?vimeo\.com\/'
-        matched = re.match(vimeo_regex, url)
+        matched = re.match(vimeo_regex, url, re.IGNORECASE)
 
         if matched is not None:
             embed_url = "https://vimeo.com/api/oembed.json?url=" + url
@@ -96,7 +106,7 @@ class Filter():
 
         # Office Mix
         office_mix_regex = '(https?:\/\/(www\.)?)(mix\.office\.com)/watch'
-        matched = re.match(office_mix_regex, url)
+        matched = re.match(office_mix_regex, url, re.IGNORECASE)
 
         if matched is not None:
             embed_url = "https://mix.office.com/oembed/?url=" + url
@@ -105,7 +115,7 @@ class Filter():
 
         # SlideShare decks
         slideshare_regex = 'https?:\/\/(www\.)?slideshare\.net'
-        matched = re.match(slideshare_regex, url)
+        matched = re.match(slideshare_regex, url, re.IGNORECASE)
 
         if matched is not None:
             embed_url = "http://www.slideshare.net/api/oembed/2?url=" + url + "&format=json"
@@ -114,7 +124,7 @@ class Filter():
 
         # Issuu
         issuu_regex = 'https?:\/\/(www\.)?issuu\.com'
-        matched = re.match(issuu_regex, url)
+        matched = re.match(issuu_regex, url, re.IGNORECASE)
 
         if matched is not None:
             embed_url = "http://issuu.com/oembed?url=" + url + "&format=json"
@@ -123,7 +133,7 @@ class Filter():
 
         # Screenr
         screenr_regex = 'https?:\/\/(www\.)?screenr\.com'
-        matched = re.match(screenr_regex, url)
+        matched = re.match(screenr_regex, url, re.IGNORECASE)
 
         if matched is not None:
             embed_url = "http://www.screenr.com/api/oembed.json?url=" + url + "&format=json"
@@ -132,7 +142,7 @@ class Filter():
 
         # Soundcloud
         soundcloud_regex = 'https?:\/\/(www\.)?soundcloud\.com'
-        matched = re.match(soundcloud_regex, url)
+        matched = re.match(soundcloud_regex, url, re.IGNORECASE)
 
         if matched is not None:
             embed_url = "http://soundcloud.com/oembed?url=" + url + "&format=json"
@@ -141,7 +151,7 @@ class Filter():
 
         # Box.com files
         box_regex = 'https?:\/\/(app\.)?box\.com'
-        matched = re.match(box_regex, url)
+        matched = re.match(box_regex, url, re.IGNORECASE)
 
         if matched is not None:
             embed_code = Filter.EMBED_CODE_TEMPLATE.format(url.replace('/s/', '/embed/preview/'))
@@ -156,7 +166,7 @@ class Filter():
 
         # # OneDrive for Business
         # odb_regex = 'https?:\/\/((\w|-)+)-my.sharepoint.com\/'
-        # matched = re.match(odb_regex, url)
+        # matched = re.match(odb_regex, url, re.IGNORECASE)
 
         # if matched is not None:
             # download_url = url.replace('WopiFrame', 'download').replace('sourcedoc', 'UniqueId')
@@ -164,7 +174,7 @@ class Filter():
 
         # # OneDrive (for consumers)
         # onedrive_regex = '(https?:\/\/(onedrive\.)?)(live\.com)'
-        # matched = re.match(onedrive_regex, url)
+        # matched = re.match(onedrive_regex, url, re.IGNORECASE)
 
         # if matched is not None:
             # download_url = url.replace('\/embed', '\/download')
@@ -172,7 +182,7 @@ class Filter():
 
         # # Dropbox files
         # dropbox_regex = 'https?:\/\/(www\.)?dropbox\.com'
-        # matched = re.match(dropbox_regex, url)
+        # matched = re.match(dropbox_regex, url, re.IGNORECASE)
 
         # if matched is not None:
             # download_url = url.replace('dl=0', 'dl=1')
