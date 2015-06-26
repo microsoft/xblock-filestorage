@@ -62,6 +62,7 @@ At present, the following services are explicitly supported:
 - OneDrive for consumers
 - Google docs
 - Google presentations
+- Dropbox
 - Vimeo
 - Slideshare
 - Soundcloud
