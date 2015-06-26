@@ -1,9 +1,9 @@
 File Storage XBlock
 ===================
 
-The “File Storage XBlock” allows course staffers to add files stored in various internet file storage services to the courseware (courseware, course info and syllabus) by adding a link through an advanced component that they create in edX’s Studio authoring tool. The files can be added either as embedded content, or as links to the files in their original location, or as links to the files after uploading them to the edX server itself. 
+The “File Storage XBlock” allows course content authors to add files stored in various internet file storage services to the course. The files can be added either as embedded content or as links to the files in their original location.
 
-Students will view these files in their Open edX or edX.org courses. 
+Students can view these files in their Open edX or edX.org courses.
 
 Installation
 ------------
@@ -41,16 +41,14 @@ After you've inserted the File Storage XBlock, a default document will be insert
 
 To change the inserted, XBlock click on the `Edit` button on the upper-right corner of the File Storage XBlock. This will bring up the edit dialog where you can change the display name of the component as well as the  document that is being inserted and how you want it to be embedded.
 
-![Edit inserted OneDrive for Business document](docs/img/editme.png)
+![Edit inserted document](docs/img/editme.png)
 
-Update the component name to the text you want to be displayed.
-Enter the URL to the file from its original location (in YouTube or OneDrive or Google Drive or Dropbox etc.)
+- Update the component name to the text you want to be displayed.
+- Enter the URL to the file from its original location (in YouTube or OneDrive or Google Drive or Dropbox etc.) Note that the file must be publicly accessible. You will have to follow the directions provided by the file storage service where the file is stored to make the file public. Also, note that you do not need to obtain an embed code for the file yourself. The File Storage XBlock can obtain it automatically for many services commonly used for educational content. On hte other hand, if you already have an embed code, you can certainly enter that and the File Storage XBlock will use it instead of the URL. 
 
-You will be able to select the way you want the file to be displayed inside the xblock:
-
-- As a link to the file in its original location.
-- Upload the file from its origial location to the edX Files and Uploads area and then insert a link to it. 
-- Embed the file in its original loaction inside an iframe.
+- Select the way you want the file to be displayed inside the xblock:
+    - Embedded inside an iframe OR
+    - As a link to the file in its original location
 
 After you click save, your File Storage XBlock will have been updated with the new values.
 
@@ -70,10 +68,10 @@ At present, the following services are explicitly supported:
 - Box.com
 
 More services can be added easily. Even if a service is not explicitly supported, an attempt will be made to allow you to include the file, but it may fail depending upon the level of support provided by the service.
-Also note that some of these services do not support embedding and some do not support uploading to the edX server. Also, some may need their own login before you can view the files in their original location.
+Also note that some may need their own login before you can view the files in their original location.
 
 ![Updated studio view](docs/img/xblock_studio_insert.png)
 
-At this point simply click on the `Publish` button and the OneDrive for Business document will be available for students to view it from the LMS.
+At this point simply click on the `Publish` button and the file will be available for students to view it from the LMS.
 
 ![Published File Storage XBlock in LMS](docs/img/student_view.png)
