@@ -39,12 +39,16 @@ After you've inserted the File Storage XBlock, a default document will be insert
 
 ![Studio Initial File Storage XBlock Insertion](docs/img/xblock_insert.png)
 
-To change the inserted, XBlock click on the `Edit` button on the upper-right corner of the File Storage XBlock. This will bring up the edit dialog where you can change the display name of the component as well as the  document that is being inserted and how you want it to be embedded.
+To change the file added to the course using the File Storage XBlock, click on the `Edit` button on the upper-right corner of the XBlock. This will bring up the edit dialog where you can change the display name of the component as well as the  document that is being inserted and how you want it to be embedded.
 
 ![Edit inserted document](docs/img/editme.png)
 
-- Update the component name to the text you want to be displayed.
-- Enter the URL to the file from its original location (in YouTube or OneDrive or Google Drive or Dropbox etc.) Note that the file must be publicly accessible. You will have to follow the directions provided by the file storage service where the file is stored to make the file public. Also, note that you do not need to obtain an embed code for the file yourself. The File Storage XBlock can obtain it automatically for many services commonly used for educational content. On hte other hand, if you already have an embed code, you can certainly enter that and the File Storage XBlock will use it instead of the URL. 
+In this dialog, you can
+
+- Update the XBlock title.
+- Enter the URL to the file from its original location (in YouTube or OneDrive or Google Drive or Dropbox etc.) 
+    - Note that the file must be publicly accessible. You will have to follow the directions provided by the file storage service where the file is stored to make the file public. 
+    - Also, note that you do not need to obtain an embed code for the file yourself. The File Storage XBlock can obtain it automatically for many services commonly used for educational content. On the other hand, if you already have an embed code, you can certainly enter that and the File Storage XBlock will use it instead of the URL. 
 
 - Select the way you want the file to be displayed inside the xblock:
     - Embedded inside an iframe OR
