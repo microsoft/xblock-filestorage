@@ -56,21 +56,21 @@ In this dialog, you can
 
 After you click save, your File Storage XBlock will have been updated with the new values.
 
-At present, the following services are explicitly supported:
-- YouTube
-- OneDrive for Business
-- OneDrive for consumers
+At present, the following services have been tested:
+- Box.net
+- Dropbox
 - Google docs
 - Google presentations
-- Dropbox
-- Vimeo
+- Issuu
+- Office Mix
+- OneDrive for Business
+- OneDrive for consumers
+- Screenr
 - Slideshare
 - Soundcloud
-- Screenr
 - TED
-- Office Mix
-- Issuu
-- Box.com
+- Vimeo
+- YouTube
 
 More services can be added easily. Even if a service is not explicitly supported, an attempt will be made to allow you to include the file, but it may fail depending upon the level of support provided by the service.
 Also note that some may need their own login before you can view the files in their original location.
