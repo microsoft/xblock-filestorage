@@ -1,16 +1,16 @@
 /* CSS for FileStorageXBlock */
 
-.filestorage_block p {
+.filestorage-xblock p {
     cursor: pointer;
 }
 
-.tip {
+.filestorage-xblock .tip {
     float: right;
     min-width: 20% !important;
     width: 25%;
 }
 
-.filestorage_block_wrapper iframe{
+.filestorage-xblock .wrapper iframe{
     width: 100%;
     min-height: 569px;
     display: block;
@@ -18,13 +18,27 @@
     border: 1px solid #cccccc;
 }
 
-.filestorage_block_wrapper iframe.no-width-height{
+.filestorage-xblock .wrapper iframe.no-width-height{
     top: 0;
     left: 0;
 }
 
-.filestorage_message {
+.filestorage-xblock .message {
     width: 100%;
     margin: 5px 0px 0px 0px;
     font-size: 12px;
+}
+
+.filestorage-xblock .error-message {
+    color: red;
+    display: none;
+    margin: 0px 0px 10px 0px;
+}
+
+.filestorage-xblock .visible {
+    display: block;
+}
+    
+.filestorage-xblock .error {
+    border: 1px solid red !important;
 }
