@@ -1,6 +1,6 @@
 """ 
-The “File Storage XBlock” allows course staffers to add files stored in various internet file storage services to the courseware (courseware, course info and syllabus) 
-by adding a link through an advanced component that they create in edX’s Studio authoring tool. The files can be added either as embedded content, 
+The "File Storage XBlock" allows course staffers to add files stored in various internet file storage services to the courseware (courseware, course info and syllabus) 
+by adding a link through an advanced component that they create in edX's Studio authoring tool. The files can be added either as embedded content, 
 or as links to the files in their original location.
 """ 
 
