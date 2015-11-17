@@ -7,11 +7,17 @@ Students can view these files in their Open edX or edX.org courses.
 
 Installation
 ------------
+
 To install the File Storage XBlock within your edX Python environment, run the following command:
 
 ```bash
 $ pip install /path/to/xblock-file-storage/
 ```
+
+Ensure that you have added the following to /edx/app/edxapp/edx-platform/cms/envs/common.py
+- ALLOW_ALL_ADVANCED_COMPONENTS: True
+
+Also ensure that you have restarted edX services after these steps.
 
 Enabling in Studio
 ------------------
@@ -80,3 +86,13 @@ Also note that some may need their own login before you can view the files in th
 At this point simply click on the `Publish` button and the file will be available for students to view it from the LMS.
 
 ![Published File Storage XBlock in LMS](docs/img/student_view.png)
+
+Troubleshooting
+---------------
+
+In case the XBlock fails to appear in the Advanced menu or other errors, you may check the following:
+- Run `sudo -u edxapp /edx/bin/pip.edxapp list`, to verify that "xblock-filestorage" is installed
+- Verify that "XBLOCK_SELECT_FUNCTION = prefer_xmodules" is present in the following config files:
+  - /edx/app/edxapp/edx-platform/lms/envs/common.py
+  - /edx/app/edxapp/edx-platform/cms/envs/common.py
+- Ensure that you have restarted edX services after installing the XBlock
