@@ -101,5 +101,30 @@ function FileStorageXBlock(runtime, element) {
     } else {
       $("#add_reference_name").hide();
     }
+
+    require( ["onedrive"],
+    function (onedrive) {
+
+      var pickerOptions = {
+        success: function(files) {
+            // Handle returned file object(s)
+        alert("You picked " + files.values[0].fileName);
+        },
+
+        cancel: function() {
+            // handle when the user cancels picking a file
+        },
+
+        linkType: "webViewLink", // or "downloadLink",
+        multiSelect: false // or true
+    }
+
+    var pickerButton = OneDrive.createOpenButton(pickerOptions);
+    document.getElementById("picker").appendChild(pickerButton);
+    console.log(document.getElementById("picker"));
+    }
+  );
+
+
   });
 }

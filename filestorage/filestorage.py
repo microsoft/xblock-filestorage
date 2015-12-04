@@ -56,27 +56,27 @@ class FileStorageXBlock(XBlock):
         scope=Scope.settings,
         default="1"
     )
-    
+
     model1 = String(
         display_name="Model1 preselection",
         help="Previous selection.",
         scope=Scope.settings,
         default=""
-    )	
+    )
 
     model2 = String(
         display_name="Model2 preselection",
         help="Previous selection.",
         scope=Scope.settings,
         default=""
-    )	
+    )
 
     # model3 = String(
         # display_name="Model3 preselection",
         # help="Previous selection.",
         # scope=Scope.settings,
         # default="selected=selected"
-    # )	
+    # )
 
     output_code = String(
         display_name="Output Iframe Embed Code",
@@ -127,6 +127,7 @@ class FileStorageXBlock(XBlock):
         frag.add_css(self.resource_string("static/css/filestorage.css"))
         frag.add_javascript(self.resource_string("static/js/src/filestorage_edit.js"))
         frag.initialize_js('FileStorageXBlock')
+        frag.add_content(u'<div id="onedrive-js" client-id="000000004017786C"></div>')
         return frag
 
     @XBlock.json_handler
